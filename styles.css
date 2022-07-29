@@ -21,8 +21,8 @@ footer {
     position: absolute;
     bottom: 0;
 
-    padding-top: 40px;
-    padding-bottom: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
 
     border-top: 1px solid rgb(194, 194, 194);
 
@@ -47,6 +47,11 @@ footer {
     text-align: center;
     letter-spacing: 15px;
     font-weight: 100;
+    transition: 0.3s;
+}
+
+.centerContent h3:hover{
+    color: rgb(215,215,215);
 }
 
 .footerContent {
