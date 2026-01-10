@@ -1,0 +1,32 @@
+/* 1. Basic Layout */
+body {
+  background-color: hotpink !important;
+}
+
+.tikz-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  width: 100%;
+  overflow-x: auto; /* Adds scrollbar if diagram is too wide */
+}
+
+/* 2. FORCE INVERT (The Nuclear Option) */
+
+/* Option A: If Quartz explicitly says "Dark" */
+:root[saved-theme="dark"] .tikz-diagram {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Option B: If Quartz says "Auto" and your system is Dark */
+@media (prefers-color-scheme: dark) {
+  :root[saved-theme="auto"] .tikz-diagram {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
+/* 3. Cleanup the SVG background */
+.tikz-diagram svg {
+  background-color: transparent !important;
+}
