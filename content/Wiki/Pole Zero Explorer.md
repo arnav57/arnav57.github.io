@@ -1,4 +1,4 @@
 ---
 title: Pole Zero Explorer
 ---
-A tool to quickly visualize the time-domain-response based on locations of poles and zeros of a control system. Can be found here []
+A tool to quickly visualize the time-domain-response based on locations of poles and zeros of a control system. Can be found here [Dynamic Control Lab](https://arnav57.github.io/static/polezero)
