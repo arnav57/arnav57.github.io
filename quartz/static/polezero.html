@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Control Lab</title>
+    <link rel="stylesheet" type="text/css" href="/static/js/jsxgraph.css" />
+    <style>
+        /* 1. CSS Defaults (Dark Mode) */
+        :root {
+            --bg: #161618;
+            --text: #7b97aa;
+            --grid: #7b97aa;
+            --accent: #84a59d; 
+            --tertiary: #e81123;
+        }
+        
+        body { margin: 0; padding: 0; font-family: sans-serif; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; }
+        
+        .controls { 
+            padding: 10px; 
+            background: var(--bg); 
+            border-bottom: 1px solid var(--grid); 
+            display: flex; gap: 10px; align-items: center; justify-content: center; 
+            z-index: 10; 
+        }
+        
+        button { 
+            padding: 6px 12px; cursor: pointer; 
+            background: var(--bg); color: var(--text); 
+            border: 1px solid var(--grid); border-radius: 4px; font-weight: bold; 
+        }
+        button:hover { background: var(--grid); color: var(--bg); }
+        button.primary { border-color: var(--accent); color: var(--accent); }
+        
+        .jxgbox { flex-grow: 1; width: 100%; border: none; background-color: var(--bg); }
+    </style>
+    <script type="text/javascript" src="/static/js/jsxgraphcore.js"></script>
+</head>
+<body>
+
+    <div class="controls">
+        <div>
+            <button onclick="addPole()" class="primary">+ Pole</button>
+            <button onclick="addZero()" class="primary">+ Zero</button>
+            <button onclick="resetBoard()">Reset</button>
+            <span style="font-size: 0.8em; opacity: 0.7; margin-left: 10px;">Right-click to delete. Click to pan, Scroll to zoom.</span>
+        </div>
+    </div>
+
+    <div id="box" class="jxgbox"></div>
+
+    <script>
+        var board, poles = [], zeros = [];
+        var curve; 
+        
+        // --- THEME CONFIGURATION ---
+        var colors = { bg: '#161618', text: '#7b97aa', grid: '#7b97aa', accent: '#84a59d', tertiary: '#e81123' };
+        function updateTheme() {
+            try {
+                var styles = window.parent.getComputedStyle(window.parent.document.documentElement);
+                var getVar = (name) => { var val = styles.getPropertyValue(name).trim(); return (val && val !== '') ? val : null; };
+                var newBg = getVar('--light'); var newText = getVar('--dark'); var newAccent = getVar('--secondary');
+                if (newBg) colors.bg = newBg; if (newText) colors.text = newText; if (newAccent) colors.accent = newAccent;
+                colors.grid = getVar('--lightgray') || colors.grid; colors.tertiary = getVar('--tertiary') || colors.tertiary;
+                document.documentElement.style.setProperty('--bg', colors.bg);
+                document.documentElement.style.setProperty('--text', colors.text);
+                document.documentElement.style.setProperty('--grid', colors.grid);
+                document.documentElement.style.setProperty('--accent', colors.accent);
+                document.documentElement.style.setProperty('--tertiary', colors.tertiary);
+            } catch(e) { console.log("Using standalone theme."); }
+        }
+        updateTheme();
+
+        // --- COMPLEX MATH LIBRARY ---
+        const C = {
+            add: (a, b) => ({ re: a.re + b.re, im: a.im + b.im }),
+            sub: (a, b) => ({ re: a.re - b.re, im: a.im - b.im }),
+            mult: (a, b) => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re }),
+            scale: (a, k) => ({ re: a.re * k, im: a.im * k }),
+            zero: () => ({ re: 0, im: 0 }),
+            one: () => ({ re: 1, im: 0 }),
+            abs: (a) => Math.sqrt(a.re*a.re + a.im*a.im)
+        };
+
+        // --- MATH ENGINE ---
+        function getTransferFunction() {
+            var num = [C.one()]; var den = [C.one()];
+            var multRoot = (poly, root) => {
+                var res = new Array(poly.length + 1).fill(C.zero());
+                for (var i = 0; i < poly.length; i++) {
+                    res[i] = C.add(res[i], poly[i]);
+                    var neg_r = C.scale(root, -1);
+                    res[i+1] = C.add(res[i+1], C.mult(poly[i], neg_r));
+                }
+                return res;
+            };
+
+            poles.forEach(p => den = multRoot(den, { re: p.X(), im: p.Y() }));
+            zeros.forEach(z => num = multRoot(num, { re: z.X(), im: z.Y() }));
+
+            // Normalize DC Gain
+            var den_last = den[den.length - 1];
+            var num_last = num[num.length - 1];
+            var den_mag = C.abs(den_last); var num_mag = C.abs(num_last);
+            if (num_mag < 1e-9) num_mag = 1;
+            var k = den_mag / num_mag;
+            for(var i=0; i<num.length; i++) num[i] = C.scale(num[i], k);
+
+            return { num, den };
+        }
+
+        // --- VISUALIZATION ---
+        function init() {
+            updateTheme();
+
+            board = JXG.JSXGraph.initBoard('box', {
+                boundingbox: [-6, 3, 10, -3], 
+                axis: true, 
+                showCopyright: false,
+                pan: { enabled: true, needTwoFingers: false, needShift: false },
+                zoom: { enabled: true, factorX: 1.25, factorY: 1.25, wheel: true, needShift: false }, // Shift+Scroll to Zoom
+                defaultAxes: {
+                    x: { strokeColor: colors.text, ticks: { strokeColor: colors.text, label: {strokeColor: colors.text} } },
+                    y: { strokeColor: colors.text, ticks: { strokeColor: colors.text, label: {strokeColor: colors.text} } }
+                }
+            });
+
+            board.create('line', [[2, -10], [2, 10]], {strokeColor: colors.grid, dash:2, fixed:true});
+            board.create('text', [-2, 2.5, "S-Plane"], {anchorX:'middle', fontSize:16, strokeColor: colors.text});
+            board.create('text', [6, 2.5, "Step Response (Real)"], {anchorX:'middle', fontSize:16, strokeColor: colors.text});
+            curve = board.create('curve', [[0],[0]], {strokeColor: colors.accent, strokeWidth:3});
+
+            board.on('update', function() {
+                // Safety Guard
+                if (poles.length === 0) {
+                    var bounds = board.getBoundingBox();
+                    curve.dataX = [2, bounds[2]]; // Draw line to edge of screen
+                    curve.dataY = [0, 0];
+                    return;
+                }
+
+                var tf = getTransferFunction();
+                
+                // --- DYNAMIC SCALING LOGIC ---
+                var bounds = board.getBoundingBox(); // [x_min, y_max, x_max, y_min]
+                var x_end = bounds[2]; // Right edge of screen
+                
+                // 1. Calculate how much time we need to simulate
+                // The graph starts at x=2. So we need (x_end - 2) seconds of data.
+                // Minimum 10 seconds to ensure it looks good even when panned left.
+                var T_max = Math.max(10, x_end - 2);
+                
+                // 2. Dynamic resolution (Level of Detail)
+                // We want roughly 500 points on screen to look smooth
+                // dt = Total Time / Target Points
+                var target_points = 500;
+                var dt = T_max / target_points;
+                
+                // Clamp dt to reasonable limits for stability
+                // Don't let it get too large (inaccurate) or too small (slow)
+                if (dt > 0.1) dt = 0.1;
+                if (dt < 0.005) dt = 0.005;
+
+                // Recalculate steps based on clamped dt
+                var steps = Math.ceil(T_max / dt);
+                // -----------------------------
+
+                var t_data = []; var y_data = [];
+                var n = tf.den.length - 1;
+                var state = new Array(n).fill(null).map(() => C.zero());
+                
+                for (let k = 0; k < steps; k++) {
+                    var u = C.one(); 
+                    var x_dot_last = u;
+                    for(let i=0; i<n; i++) x_dot_last = C.sub(x_dot_last, C.mult(tf.den[n-i], state[i]));
+                    
+                    var next_state = [];
+                    for(let i=0; i<n-1; i++) next_state[i] = C.add(state[i], C.scale(state[i+1], dt));
+                    next_state[n-1] = C.add(state[n-1], C.scale(x_dot_last, dt));
+                    state = next_state;
+
+                    var y = C.zero();
+                    var m = tf.num.length - 1;
+                    for(let i=0; i<=m; i++) {
+                        if (i < n) y = C.add(y, C.mult(tf.num[m-i], state[i]));
+                    }
+                    
+                    t_data.push(k * dt + 2);
+                    y_data.push(y.re); 
+                    
+                    // Optimization: Stop if we go way off screen vertically
+                    // But keep calculating if it might come back (oscillations)
+                    // Hard stop only for massive instability
+                    if (Math.abs(y.re) > 1000) break; 
+                }
+                curve.dataX = t_data; curve.dataY = y_data;
+            });
+
+            addPoleAt(-1, 0);
+        }
+
+        // --- INTERACTION ---
+        function addPole() { addPoleAt(-2, 2); }
+        function addZero() { addZeroAt(-4, 0); }
+
+        function addPoleAt(x, y) {
+            var p = board.create('point', [x, y], { name: '', face: 'x', size: 5, color: colors.tertiary, label: {visible:false}});
+            poles.push(p);
+            p.on('down', function(e) {
+                if (e.button === 2 || e.shiftKey) { removePoint(p, poles); board.removeObject(p); }
+            });
+            board.update();
+        }
+
+        function addZeroAt(x, y) {
+            var z = board.create('point', [x, y], { name: '', face: 'o', size: 5, color: colors.accent, label: {visible:false}});
+            zeros.push(z);
+            // FIX: "p" changed to "z" below
+            z.on('down', function(e) {
+                if (e.button === 2 || e.shiftKey) { removePoint(z, zeros); board.removeObject(z); }
+            });
+            board.update();
+        }
+
+        function removePoint(p, list) {
+            var index = list.indexOf(p);
+            if (index > -1) list.splice(index, 1);
+        }
+
+        function resetBoard() {
+            poles = []; zeros = [];
+            JXG.JSXGraph.freeBoard(board);
+            init();
+        }
+
+        window.onload = init;
+        document.oncontextmenu = function() { return false; };
+    </script>
+</body>
+</html>
