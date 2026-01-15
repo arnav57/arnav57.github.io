@@ -19,4 +19,6 @@ We have chosen to do the Motor Controller/Driver part of the project. The specif
  
  1. [[analog|Analog Design]]
 	 - [[analog sim| Analog Simulation]]
- 
+
+Our parts list is also here
+- [[components|Parts List]]

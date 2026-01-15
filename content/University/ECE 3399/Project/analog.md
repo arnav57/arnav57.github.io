@@ -6,6 +6,8 @@ This page goes over the proposed analog design of this project. It currently fea
 1. H-Bridge
 2. Level Switchers
 3. Force Shunt
+
+This page goes over the workings of each component, the simulations to prove this architecture works can be found here: [[analog sim|Analog Simulations]]
 ## H-Bridge
 
 The provided motor specifications list it as a 12V DC Motor with a stall current of 2.2 A. We will design the circuit to safely dissipate 3 A of current through any path involving the motor for safe operation. A functional schematic of the H-Bridge is given below.

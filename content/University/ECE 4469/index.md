@@ -7,4 +7,5 @@ title: ECE 4469
 - **Course Code:** ECE 4469
 - **Prof**: Brown
 - [[University/ECE 4469/Lectures/index|Lecture Notes]]
+- [[University/ECE 4469/Review/index|Classical Controls Review]]
 
