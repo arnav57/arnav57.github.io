@@ -13,3 +13,10 @@ We have chosen to do the Motor Controller/Driver part of the project. The specif
 	- measure at 20kHz, better if at a higher rate
 - Weld head displacement must be < 1cm.
 
+# Project Components
+
+ This project can be broken down into a few main things, each of them are linked below
+ 
+ 1. [[analog|Analog Design]]
+	 - [[analog sim| Analog Simulation]]
+ 
