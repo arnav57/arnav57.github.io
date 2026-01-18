@@ -9,3 +9,4 @@ tags:
 - [[University/ECE 4469/index|Applied Control Systems]]
 - [[University/ECE 3370/index|Analog Communication Electronics]]
 - [[University/ECE 3399/index|Electronic Design II]]
+- [[University/MME 2234/index|Dynamics & Heat Transfer]]
