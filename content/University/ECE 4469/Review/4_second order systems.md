@@ -38,7 +38,7 @@ A overdamped system also results in no oscillations, but it features two time co
 
 # Metrics
 
-Some relevant metrics for second order systems are:
+Some relevant metrics for (open-loop) second order systems are:
 - Peak time
 - Overshoot (in %)
 - Settling time

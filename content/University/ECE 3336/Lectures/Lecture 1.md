@@ -252,4 +252,4 @@ $$
 # Examples
 
 In this lecture the following examples were done:
-- [[Example 1]]
+- [[University/ECE 3336/Examples/Example 1]]
