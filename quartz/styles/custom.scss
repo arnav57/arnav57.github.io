@@ -1,3 +1,38 @@
 @use "./base.scss";
 
-// put your custom CSS here!
+/* quartz/styles/custom.scss */
+
+/* 1. Unlock the outer container width */
+.page {
+  max-width: 100vw !important; /* Allow page to hit the screen edges */
+  padding: 0 2rem !important;  /* Keep a little padding so text doesn't hit the bezel */
+}
+
+/* 2. Redefine the Desktop Grid Layout */
+@media all and (min-width: 1200px) {
+  .page {
+    /* Force the grid to be: 
+       [Left Sidebar 280px]  [Middle Content 1fr (FLEXIBLE)]  [Right Sidebar 280px]
+       
+       By default, Quartz sets the middle one to something rigid like minmax(0, 600px).
+       We are breaking that rule here.
+    */
+    grid-template-columns: 280px 1fr 280px !important;
+    gap: 2rem !important; /* Ensure space between columns */
+  }
+}
+
+/* 3. Unlock the text container itself */
+.center {
+  max-width: 100% !important; /* Fill the new wide grid track */
+  min-width: 0;
+}
+
+/* Optional: Center the text if your screen is ultrawide */
+/* Use this if 100% width makes paragraphs impossible to read on a 32" monitor */
+/*
+.center {
+    max-width: 1200px !important; 
+    margin: 0 auto;
+}
+*/
