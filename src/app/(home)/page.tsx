@@ -6,7 +6,7 @@ export default function HomePage() {
       <h1 className="text-2xl font-bold mb-4">This website is still under construction!</h1>
       <p>
         You can visit{' '}
-        <Link href="edge_tpu/" className="font-medium underline">
+        <Link href="edge_tpu/overview" className="font-medium underline">
           /edge_tpu
         </Link>{' '}
         and see the docs for capstone.
