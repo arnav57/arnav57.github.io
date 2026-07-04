@@ -1,12 +1,25 @@
-import { docs } from 'collections/server';
+import { docs, EdgeTpuDocs } from 'collections/server';
 import { loader } from 'fumadocs-core/source';
 import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
+import { icons } from 'lucide-react';
+import { createElement } from 'react';
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
   baseUrl: docsRoute,
   source: docs.toFumadocsSource(),
   plugins: [],
+});
+
+// edge tpu loader
+export const EdgeTpuSource = loader({
+  baseUrl: '/edge_tpu',
+  source: EdgeTpuDocs.toFumadocsSource(),
+  plugins: [],
+  icon(icon) {
+    if (!icon) return;
+    if (icon in icons) return createElement(icons[icon as keyof typeof icons])
+  }
 });
 
 export function getPageImage(page: (typeof source)['$inferPage']) {

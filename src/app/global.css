@@ -10,3 +10,28 @@ html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
 }
+
+
+/* OVERVIEW */
+[data-section="overview"] {
+  --color-fd-primary: #89B4F9;
+}
+svg.lucide-info {
+  color: #89B4F9 !important;
+}
+
+/* ARCH */
+svg.lucide-circuit-board {
+  color: #F5A97F !important;
+}
+[data-section="architecture"] {
+  --color-fd-primary: #F5A97F;
+}
+
+/* DIG DESIGN */
+svg.lucide-cpu {
+  color: #c9a1e3 !important;
+}
+[data-section="design"] {
+  --color-fd-primary: #c9a1e3;
+}

@@ -1,0 +1,7 @@
+{
+    "title": "Digital Design",
+    "description": "Design Implementation Details",
+    "icon": "Blocks",
+    "root": true,
+    "pages": ["..."]
+  }

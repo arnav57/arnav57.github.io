@@ -1,6 +1,9 @@
 import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
 
+import rehypeKatex from 'rehype-katex';
+import remarkMath from 'remark-math';
+
 // You can customize Zod schemas for frontmatter and `meta.json` here
 // see https://fumadocs.dev/docs/mdx/collections
 export const docs = defineDocs({
@@ -16,8 +19,24 @@ export const docs = defineDocs({
   },
 });
 
+// Edge TPU Documentation
+export const EdgeTpuDocs = defineDocs({
+  dir: 'content/edge_tpu',
+  docs: {
+    schema: pageSchema,
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});
+
 export default defineConfig({
   mdxOptions: {
     // MDX options
+    remarkPlugins: [remarkMath],
+    rehypePlugins: (v) => [rehypeKatex, ...v],
   },
 });

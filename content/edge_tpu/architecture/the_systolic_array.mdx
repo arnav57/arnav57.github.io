@@ -1,0 +1,156 @@
+---
+title: Systolic Array
+description: The heart of a TPU
+icon: Grid2x2
+---
+
+## Building the Array
+
+In order to understand how this structure works for matrix multiplication, this page goes over using a 2x2 Systolic Array for implementing a 2x2 matrix multiplication.
+We can see that the Systolic Array is built out of a grid of interconnected PEs as shown below. 
+
+Recall that $a$ flows left to right, and $c$ flows top to bottom
+
+<SystolicArray rows={2} cols={2} weights={{'0,0': 'PE(0,0)', '0,1': 'PE(0,1)', '1,1': 'PE(1,1)', '1,0':'PE(1,0)'}}/>
+
+### Interactive Demo
+
+We will now take a look and see how the entire structure works. lets assume the following things:
+
+* All PE's have their $b$ weight stored inside them already. The $b$ value is shown in the middle of each PE
+* The $c$ input to the top of the array is always $0$.
+* The rightmost activation outputs are not shown in the below diagram as there are no more PE's to the right of this 2x2 array
+
+Lets see how things flow cycle by cycle first. Note that here we assume each PE completes its MLA operation in one cycle. We use **decimal values** below
+
+<Tabs items={['Cycle 0', 'Cycle 1', 'Cycle 2', 'Cycle 3', 'Cycle 4']}>
+    <Tab value="Cycle 0">
+        <SystolicArray 
+            rows={2} cols={2} 
+            weights={{ '0,0': '5', '0,1': '3', '1,0': '4', '1,1': '6' }}
+            cycle={{ 
+                activations: { '0,0': '3' }, 
+                partialSums: {'0,0': '0'} 
+            }} />
+    </Tab>
+    <Tab value="Cycle 1">
+        <SystolicArray 
+            rows={2} cols={2} 
+            weights={{ '0,0': '5', '0,1': '3', '1,0': '4', '1,1': '6' }}
+            cycle={{ 
+                activations: { '0,1': '3', '1,0': '2' }, 
+                partialSums: {'1,0': '15', '0,1': '0'} 
+            }} 
+        />
+    </Tab>
+    <Tab value="Cycle 2">
+        <SystolicArray
+            rows={2}
+            cols={2}
+            weights={{ '0,0': '5', '0,1': '3', '1,0': '4', '1,1': '6' }}
+            cycle={{ 
+                activations: {'1,1': '2'},
+                outputs: { '1,0': '23', '0,1':'9'} 
+            }}
+        />
+    </Tab>
+    <Tab value="Cycle 3">
+        <SystolicArray
+            rows={2}
+            cols={2}
+            weights={{ '0,0': '5', '0,1': '3', '1,0': '4', '1,1': '6' }}
+            cycle={{ 
+                outputs: { '1,1':'21'} 
+            }}
+        />
+    </Tab>
+    <Tab value="Cycle 4">
+        <SystolicArray
+            rows={2}
+            cols={2}
+            weights={{ '0,0': '5', '0,1': '3', '1,0': '4', '1,1': '6' }}
+        />
+    </Tab>
+</Tabs>
+
+### Tying to Computation
+
+From the above demo, we can see we obtained the values 23 and 21 as the output. So a new question arises. What did we just compute?
+
+Well the first thing we should do is take a look at how the diagram above is structured. The way the weights ($b$) are laid out in a grid visually suggest that the $B$ matrix is as follows
+
+$$
+B = 
+\begin{bmatrix}
+5 && 3 \\
+4 && 6
+\end{bmatrix}
+$$
+
+This is correct, but what about our input? Where was that in the diagram? The answer is the input was the numbers 3 and 2, flowing in from the right. Its important to note that they didnt enter the array at the same time. They were skewed. So this suggests 
+our $A$ matrix was one of the two possibilities below:
+
+<Cards>
+    <Card title="Option 1">
+        $$
+        A = 
+        \begin{bmatrix}
+            3 && 2
+        \end{bmatrix}
+        $$
+    </Card>
+        <Card title="Option 2">
+        $$
+        A = 
+        \begin{bmatrix}
+            2 && 3
+        \end{bmatrix}
+        $$
+    </Card>
+</Cards>
+
+Since the number 3 flows in first, we can define our input to be **Option 1**, thus we just saw hardware perform the computation below
+
+$$
+C =        
+
+\begin{bmatrix}
+    3 && 2
+\end{bmatrix}
+
+\times
+
+\begin{bmatrix}
+5 && 3 \\
+4 && 6
+\end{bmatrix}
+
+=
+
+\begin{bmatrix}
+23 && 21
+\end{bmatrix}
+$$
+
+This means, that in order to do a full matrix $\times$ matrix multiplication, we just feed in another row vector like the one above, just after we feed in the original row vector. In general feeding a matrix $A$ into a systolic array follows this algorithm
+
+```python
+
+# A is some 2x2 matrix made up of elements a00 to a11
+A = [
+  [ 'a00', 'a01' ],
+  [ 'a10', 'a11' ]
+]
+
+# decompose the matrix into row vectors
+row_vector_one = A[0]
+row_vector_two = A[1]
+
+# then the first element of each row vector is appended to a list
+pe_00_input = [ row_vector_one[0], row_vector_two[1], 0 ] # padded with 0, so the length matches
+pe_10_input = [ 0, row_vector_one[1], row_vector_two[2] ] # starts with 0, because it needs a skew
+
+print(pe_00_input) # output: [a00 , a01, 0]
+print(pe_10_input) # output: [0, a10, a11]
+
+```

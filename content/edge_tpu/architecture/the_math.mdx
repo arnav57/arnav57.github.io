@@ -1,0 +1,40 @@
+---
+title: Math Background
+description: Matrix Multiplication Explained (kinda)
+icon: SquareFunction
+---
+
+## Matrix Multiplication
+
+If you are reading this, there is a 99% chance you already know what a matrix is. Its just a grid of numbers. An example matrix $A$ is given below.
+The general convention for representing items in a matrix is $a_{ij}$ where this is the element in row $i$ and column $j$ of matrix $A$
+
+$$
+A = \begin{bmatrix}
+a_{11} & a_{12} & a_{13} \\
+a_{21} & a_{22} & a_{23} \\
+a_{31} & a_{32} & a_{33} 
+\end{bmatrix}
+$$
+
+Someone figured out that multiplying these grids of numbers can be useful, so now we are stuck with it. Matrix multiplication between two matrices of *compatible dimensions* $A$ and $B$ is defined as shown below:
+
+if
+$$
+C = A \times B \text{ and } C \in \mathbb{R}^{M \times N}
+$$
+
+then each element in $C$ called $c_{ij}$ is found through this summation, where $P$ is the inner dimension of the matrix multiplication.
+$$
+ c_{ij} = \sum_{k = 1}^{P} a_{ik}b_{kj}
+$$
+
+### The Dot Product
+
+What this means is that we select a row from matrix $A$, select a column from matrix $B$, perform a dot-product between these two selections. And the result of this dot product goes into where these two columns overlap.
+
+## Main Point
+
+This means that the atomic operations we need to perform are the ones shared by a dot-product. This means we have to multiply two numbers, and also add numbers together. 
+
+This maps nicely to the MLA <span className="text-fd-muted-foreground text-sm">(Multiply and Accumulate)</span> Operation.

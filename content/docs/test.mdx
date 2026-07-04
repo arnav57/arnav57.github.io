@@ -5,8 +5,15 @@ description: Components
 
 ## Code Block
 
-```js
-console.log('Hello World');
+```verilog
+module test();
+
+  logic [3:0] signed A;
+  logic [3:0] signed B;
+
+  assign B = A [3:0];
+
+endmodule : test
 ```
 
 ## Cards

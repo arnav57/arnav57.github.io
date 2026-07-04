@@ -1,0 +1,30 @@
+---
+title: Tech Stack
+description: A quick rundown of what we are using to build this TPU
+icon: Layers
+---
+
+## Frontend
+
+### RTL Design
+
+To write the RTL, we are using SystemVerilog. We did not choose VHDL because we are sane human beings.
+
+### RTL Simulation
+
+For RTL Simulation we use QuestaSim + CocoTB from python. 
+
+* UVM was not chosen due to how verbose it is. This design is not complex enough to justify the overhead of UVM for verification here
+* QuestaSim is used because we are using ALTERA IP with the DE2-115 Board. Such as Ethernet PHYs, PLLs, etc. These are non-simulable without questasim
+
+## Backend
+
+Synthesis, PnR and anything else is handled by Quartus Prime Lite. Since we are targeting an Altera board (DE2-115) its easy to use this.
+
+### Devlopment Board
+
+We are targeting implementation on an FPGA, more specifically the Altera DE2-115 (Cyclone IV E)
+
+
+
+

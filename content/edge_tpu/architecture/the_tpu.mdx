@@ -1,0 +1,28 @@
+---
+title: The TPU
+description: What is a TPU? What does it do?
+icon: Gpu
+---
+
+## Summary
+
+The TPU is a type of ASIC <span className="text-fd-muted-foreground text-sm">(Application Specific Integrated Circuit)</span> that is commonly used as an *AI Accelerator*.
+It is basically hardware that is optimized for performing matrix multiplication. Large matrix multiplication is a pretty-expensive operation, dedicated hardware can speed it up signficantly.
+
+### ASIC & FPGA
+
+Commonly, TPUs are implemented as ASICs directly on silicon. This is expensive and is not generally viable for students to do this. Instead, we can implement this on a FPGA Development Board.
+It will be slower and less-optimized compared to an ASIC implementation, but the big benefit here is that it can physically exist.
+
+### Novelty
+
+Other projects have implemented small basic TPU's on similar boards (probably even this specific board before), however from my quick google-searching, these projects do not focus much on performance. 
+This project focuses on achiveing maximum performance.
+
+Note that We define performance here as **peak** GOPS <span className="text-fd-muted-foreground text-sm">("Giga" Operations per Second)</span>
+
+### Required Knowledge
+
+The pages on this website should help guide you through understanding how this works at a high-level, this assumes you have some basic knowledge about matrix math, and the basics of combinatorial/sequential digital logic. So lets begin our architectural exploration! :)
+
+

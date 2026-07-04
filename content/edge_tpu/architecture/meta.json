@@ -1,0 +1,12 @@
+{
+    "title": "Architecture",
+    "description": "Our TPU at a high-level",
+    "icon": "CircuitBoard",
+    "root": true,
+    "pages": [
+      "the_tpu",
+      "the_math",
+      "the_processing_element",
+      "the_systolic_array"
+    ]
+  }

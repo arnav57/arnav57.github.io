@@ -1,0 +1,45 @@
+---
+title: Processing Element
+description: The atomic unit of the Systolic Array
+icon: Atom
+---
+
+## Multiply and Accumulate
+
+As we covered in the previous section, the elementary operations required to perform a matrix multiplication stem from the dot product, which means we need to multiply and add (MLA).
+
+In order to build up to the **Systolic Array**, which is the heart of our TPU, we first need to define the **Processing Element**.
+
+### The Processing Element
+
+The PE <span className="text-fd-muted-foreground text-sm">(Processing Element)</span> has one job. Multiply two numbers $a$ and $b$ together, and add them to another number $c$. It is literally a cell that performs the MLA operation...
+
+$$
+\text{PE}(a, b, c) \equiv (a \times b) + c
+$$
+
+Going forward lets also define a graphical symbol for the Processing Element, itll come in handy later. Note that this symbol has a few changes:
+
+* The *activation* $a$ flows in from the left, and leaves from the right after some discrete time step
+* The *weight* $b$ is already present inside the processing element
+* The *partial sum* $c$ flows in from the top, the MLA operation is done, and it leaves from the bottom after some discrete time step
+
+<PESymbol />
+
+### Waveforms
+
+To better understand how this would work under an ideal implementation, lets take a look at a simple waveform
+
+<Waveform
+  signal={[
+  { name: 'clk',   wave: 'P.......' },
+  { name: 'a_in',  wave: '030.....', data: ['0d20'] },
+  { name: 'a_out', wave: '0.30....', data: ['0d20']},
+  { name: 'b',     wave: '8.......', data: ['0d03']},
+  { name: 'c_in',  wave: '050.....', data:['0d04']},
+  { name: 'out',   wave: '0.50....', data:['0d64']},
+  ]}
+/>
+
+Notice how $a$ flows in, waits for one clock cycle and then flows out. Similarly, $c$ arrives at the same time as $a$, the MLA operation is completed and then the output flows out aligned with the flowing out of $a$. This is the main property of the Processing element.
+These inflows and outflows have to be aligned.

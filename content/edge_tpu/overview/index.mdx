@@ -1,0 +1,30 @@
+---
+title: Home
+description: Project Documentation for the Edge TPU
+icon: House
+---
+
+import { Cpu, CircuitBoard, TerminalSquare, Cog, Layers } from "lucide-react"
+
+# Overview [#overview]
+
+This project aims to implement a Simple TPU <span className="text-fd-muted-foreground text-sm">(Tensor Processing Unit)</span> on the DE2-115 FPGA with a focus on performance.
+In case you have any questions, the blocks below should help to answer those! Alternatively you can also navigate using the section swticher on the sidebar.
+
+<Cards>
+  <Card icon={<CircuitBoard className="text-purple-300"/> } title="Architecture Overview" href="/edge_tpu/architecture/the_tpu">
+    What is a TPU? What does it do? How do we implement it? 
+  </Card>
+  <Card icon={<Cpu className="text-yellow-300" />} title="Digital Design" href="/edge_tpu/design">
+    How is the architecture reflected in the implementation?
+  </Card>
+  <Card icon={<Layers className= "text-blue-300" />} title="Tech Stack" href="/edge_tpu/overview/stack">
+    What software are we using to build this thing?
+  </Card>
+  <Card icon={<TerminalSquare className="text-blue-300"/>} title="Software Ecosystem" href="/edge_tpu/software">
+    What software is built around this thing? How do we use it?
+  </Card>
+</Cards>
+
+
+

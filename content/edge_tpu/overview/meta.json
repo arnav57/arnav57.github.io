@@ -1,0 +1,7 @@
+{
+    "title": "Overview",
+    "description": "Summary of the project",
+    "icon": "Info",
+    "root": true,
+    "pages": ["..."]
+  }
