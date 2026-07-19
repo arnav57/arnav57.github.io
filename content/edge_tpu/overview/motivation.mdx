@@ -1,0 +1,55 @@
+---
+title: Project Background
+description: A brief overview of the entire project, why and how it was build, what was built, and who was involved
+icon: ScrollText
+---
+
+## Motivation
+
+This project was basically created for a few reasons:
+
+1. To actually make something somewhat complex all by myself. The reasons for this include:
+    - Architecting an entire system without looking at any other RTL implementations
+    - Learn about how hardware and software can co-integrate in a nice way
+    - Ultimately the main reason this project exists, is so i can become a better digital <span className="text-fd-muted-foreground text-sm">( RTL )</span> designer
+1. As a capstone (or part of one) for my Sr. Year in ECE
+1. Because doing something like this is undeniably cool
+
+## Constraints
+
+As listed above, the main factor when creating this design was that **No other implementations were consulted**. This is because i wanted to test my own sense of developing uArch on a large scale on a project like this, 
+and develop everything entirely by myself. 
+
+Another big (and probably obvious) constraint is that everything is built on OSS <span className="text-fd-muted-foreground text-sm">(Open Source Software)</span>. It would have been amazing to have Synopsys Verdi during wave review,
+but alas i am but one (broke) student
+
+Another constraint is that this thing should actually be usable... I have done a bit of surface-level research on what types of projects exist. Commonly i saw projects with these pitfalls:
+
+1. Purely simulation designs targeted for ASIC (on SKY130, or other open-sourced PDKs)
+1. Small designs, nothing large and designed for performance
+1. No way to actually use the design in the real world
+
+This project aims to do all the things above. It should be pass our simulations, be usable, and performant compared to what we can get out of our FPGA. If time permits we will also synthesize the digital core on SKY130 (with a GREATLY reduced core speed) purely to get the GDS,
+so we can use it in posters or whatever else on this website i scrapped together.
+
+Oh yeah, I'll also document this however I can along the way :)
+
+## Authors & Contact
+
+### Authors
+
+As for right now, I (arnav) am the only person working on this. If anyone from the capstone group ends up working on things they will be credited here!
+
+- **Architecture**: Arnav Goyal
+- **RTL Design**: Arnav Goyal
+- **Verification**: Arnav Goyal
+- **Software**: Arnav Goyal
+- **Documentation**: Arnav Goyal
+
+### Contact
+
+Here is the contact info for everyone above. Please do not send us spam emails :(
+
+- Arnav Goyal ( arnav.go.2003@gmail.com )
+
+

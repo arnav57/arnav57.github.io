@@ -1,0 +1,46 @@
+---
+title: Processing Element
+description: Our Processing Element
+icon: Atom
+---
+
+## Overview
+
+This project's processing element is basically a 3-stage pipelined MLA weight-stationary unit with validity flags as well. 
+
+Basically it accepts a constant 1-cycle flow of values from the Activation or Partial Sum inputs (A_i and P_i respectively),
+and validity inputs (Av_i, Pv_i respectively) as well. After 3 cycles it outputs a the result of the MLA, and asserts the output valid flag.
+
+Because of the weight-stationary nature of this element, the activation path can be used to store a weight, so we also add a small interface for latching/clearing this stored weight directly on the PE
+
+A complete waveform showing weight storage and a computation pass is given below with a docs only `STATE` variable that shows whats happening, 
+Basically this PE implements MLA as `P_o = (A_i * B_r) + P_i` where P_o shows up after a 3 cycle delay
+
+<Waveform
+  signal={[
+  { name: 'clk_i',      wave: 'P................' },
+  { name: 'rstn_i',     wave: '01...............'},
+  { name: 'STATE',      wave: '2.2..2...........', data: ['IN RST', 'LD WEIGHT', 'COMPUTE']},
+  { name: 'A_i',        wave: '0..30....3330....', data: ['0d2', '0d5', '0d6', '0d7'] },
+  { name: 'P_i',        wave: '0........8880....', data: ['0d20', '0d40', '0d60']},
+  { name: 'B_r',        wave: '0...9............', data: ['0d2']},
+  { name: 'Av_i',       wave: '0........1..0....', data: ['0d20'] },
+  { name: 'Pv_i',       wave: '0........1..0....', data: ['0d20']},
+  { name: 'latch_i',    wave: '0..10............', data: ['0d20'] },
+  { name: 'clear_i',    wave: '0................', data: ['0d20']},
+  { name: 'P_o',        wave: '0...........6660.', data: ['0d30', '0d52', '0d74']},
+  { name: 'Pv_o',       wave: '0...........1..0.', data: ['0d20']}
+  ]}
+/>
+
+## Representation
+
+As i love diagrams, the PE symbol should be updated with this new information. For any digital design purposes, the PE is shown below. When we go up in the hierarchy (array level and above), we abstract away all the gray wires in the diagram below.
+
+<PESymbolHW />
+
+## Implications
+
+This implementation, specifically the 3-stage pipelining allows for a greater core frequency, but it also complicates the surrounding logic. We see that the data for `A_i` and `P_i` (as well as the corresponding validity flags) must arrive in lockstep.
+And since this PE feeds the next (downward, or right) connected neighbour after 3 cycles, the row inputs to those neighbours need to be skewed by 3 cycles, not 1 cycle as desribed on the architecture page. For how we deal with the skewing, you can take a look at the next page
+All i will say for now is: FIFOs

@@ -4,9 +4,11 @@
     "icon": "CircuitBoard",
     "root": true,
     "pages": [
+      "---What is a TPU?---",
       "the_tpu",
       "the_math",
       "the_processing_element",
-      "the_systolic_array"
+      "the_systolic_array",
+      "---Design Architecture---"
     ]
   }

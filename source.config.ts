@@ -1,5 +1,6 @@
 import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
+import { remarkMdxMermaid } from 'fumadocs-core/mdx-plugins';
 
 import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
@@ -36,7 +37,7 @@ export const EdgeTpuDocs = defineDocs({
 export default defineConfig({
   mdxOptions: {
     // MDX options
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkMath, remarkMdxMermaid],
     rehypePlugins: (v) => [rehypeKatex, ...v],
   },
 });

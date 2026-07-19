@@ -1,7 +1,7 @@
 {
     "title": "Digital Design",
-    "description": "Design Implementation Details",
-    "icon": "Blocks",
+    "description": "The RTL Implementation",
+    "icon": "Cpu",
     "root": true,
     "pages": ["..."]
   }
